@@ -1,0 +1,9 @@
+promo_id,promo_name,start_date,end_date,category_scope,discount_pct
+P01,Ramadan Oud Offer 2025,2025-03-01,2025-03-29,Oud,0.2
+P02,Eid al-Fitr Gift Sets 2025,2025-03-30,2025-04-05,Gift Set,0.15
+P03,Summer Musk Festival,2025-07-01,2025-07-31,Musk,0.15
+P04,National Day 95,2025-09-20,2025-09-26,ALL,0.1
+P05,White Friday 2025,2025-11-21,2025-11-30,EDP,0.25
+P06,Founding Day Bakhoor 2026,2026-02-20,2026-02-23,Bakhoor,0.15
+P07,Ramadan Oud Offer 2026,2026-02-18,2026-03-19,Oud,0.2
+P08,Eid al-Fitr Gift Sets 2026,2026-03-20,2026-03-26,Gift Set,0.15

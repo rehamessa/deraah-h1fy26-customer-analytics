@@ -1,0 +1,121 @@
+sku,product_name,brand,category,sub_category,list_price,unit_cost,launch_date
+SKU-0001,Quntar Oud Gold 3ml,Quntar,Oud,Oud Oil Blend,485.0,140.13,2023-01-01
+SKU-0002,Aurevo Oud Silk 12ml,Aurevo,Oud,Hindi Oud,970.0,301.62,2023-01-01
+SKU-0003,Talivo Oud Pure 12ml,Talivo,Oud,Hindi Oud,795.0,332.27,2023-01-01
+SKU-0004,Lumaris Oud Midnight 3ml,Lumaris,Oud,Cambodi Oud,700.0,330.16,2023-01-01
+SKU-0005,Aurevo Oud Silk 3ml,Aurevo,Oud,Cambodi Oud,645.0,301.22,2023-01-01
+SKU-0006,Duneva Oud Silk 12ml,Duneva,Oud,Cambodi Oud,640.0,245.76,2023-01-01
+SKU-0007,Oudelle Oud Velvet 3ml,Oudelle,Oud,Hindi Oud,1160.0,530.76,2023-01-01
+SKU-0008,Zevora Oud Pearl 6ml,Zevora,Oud,Cambodi Oud,865.0,246.63,2023-01-01
+SKU-0009,Sandrex Oud Amber 12ml,Sandrex,Oud,Hindi Oud,540.0,249.91,2023-01-01
+SKU-0010,Sandrex Oud Desert Rose 12ml,Sandrex,Oud,Cambodi Oud,840.0,261.05,2023-01-01
+SKU-0011,Aurevo Oud Imperial 6ml,Aurevo,Oud,Hindi Oud,840.0,335.7,2023-01-01
+SKU-0012,Quntar Oud Midnight 6ml,Quntar,Oud,Oud Oil Blend,280.0,130.0,2023-01-01
+SKU-0013,Zevora Oud Pure 12ml,Zevora,Oud,Cambodi Oud,1135.0,420.36,2023-01-01
+SKU-0014,Oudelle Oud Desert Rose 12ml,Oudelle,Oud,Cambodi Oud,895.0,273.72,2023-01-01
+SKU-0015,Aurevo Oud Imperial 12ml,Aurevo,Oud,Cambodi Oud,1100.0,343.29,2023-01-01
+SKU-0016,Lumaris Oud Velvet 6ml,Lumaris,Oud,Hindi Oud,655.0,297.11,2023-01-01
+SKU-0017,Mirvanta Oud Silk 3ml,Mirvanta,Oud,Hindi Oud,575.0,214.35,2023-01-01
+SKU-0018,Mirvanta Oud Silk 6ml,Mirvanta,Oud,Oud Oil Blend,420.0,158.09,2023-01-01
+SKU-0019,Quntar Oud Midnight 12ml,Quntar,Oud,Cambodi Oud,1005.0,451.82,2023-01-01
+SKU-0020,Oudelle Oud Royale 3ml,Oudelle,Oud,Oud Oil Blend,1085.0,375.51,2023-01-01
+SKU-0021,Aurevo Musk Sultan 50ml,Aurevo,Musk,White Musk,95.0,33.29,2023-01-01
+SKU-0022,Lumaris Musk Amber 50ml,Lumaris,Musk,Musk Oil,190.0,61.43,2023-01-01
+SKU-0023,Duneva Musk Majestic 30ml,Duneva,Musk,Musk Oil,165.0,70.32,2023-01-01
+SKU-0024,Duneva Musk Silk 50ml,Duneva,Musk,Musk Oil,110.0,33.72,2023-01-01
+SKU-0025,Nerayn Musk Noir 30ml,Nerayn,Musk,Musk Oil,95.0,27.75,2023-01-01
+SKU-0026,Talivo Musk Majestic 10ml,Talivo,Musk,White Musk,185.0,70.55,2023-01-01
+SKU-0027,Nerayn Musk Gold 10ml,Nerayn,Musk,Tahara Musk,115.0,35.91,2023-01-01
+SKU-0028,Nerayn Musk Noir 10ml,Nerayn,Musk,Tahara Musk,140.0,50.81,2023-01-01
+SKU-0029,Zevora Musk Royale 10ml,Zevora,Musk,Tahara Musk,105.0,31.98,2023-01-01
+SKU-0030,Aurevo Musk Gold 30ml,Aurevo,Musk,Tahara Musk,120.0,48.17,2023-01-01
+SKU-0031,Duneva Musk Royale 30ml,Duneva,Musk,White Musk,120.0,47.86,2023-01-01
+SKU-0032,Mirvanta Musk Pure 10ml,Mirvanta,Musk,Musk Oil,190.0,79.09,2023-01-01
+SKU-0033,Nerayn Musk Velvet 30ml,Nerayn,Musk,Tahara Musk,240.0,69.97,2023-01-01
+SKU-0034,Mirvanta Musk Cedar 10ml,Mirvanta,Musk,Tahara Musk,115.0,38.86,2023-01-01
+SKU-0035,Quntar Musk Silk 30ml,Quntar,Musk,White Musk,120.0,46.61,2023-01-01
+SKU-0036,Talivo Musk Imperial 50ml,Talivo,Musk,White Musk,70.0,21.87,2023-01-01
+SKU-0037,Quntar Musk Noir 10ml,Quntar,Musk,Tahara Musk,85.0,33.95,2023-01-01
+SKU-0038,Nerayn Musk Royale 30ml,Nerayn,Musk,Tahara Musk,170.0,61.72,2023-01-01
+SKU-0039,Mirvanta Eau de Parfum Imperial 75ml,Mirvanta,EDP,Woody,490.0,155.18,2023-01-01
+SKU-0040,Zevora Eau de Parfum Pure 100ml,Zevora,EDP,Fresh,620.0,283.85,2023-01-01
+SKU-0041,Lumaris Eau de Parfum Imperial 50ml,Lumaris,EDP,Fresh,190.0,69.08,2023-01-01
+SKU-0042,Talivo Eau de Parfum Blanc 100ml,Talivo,EDP,Woody,460.0,179.67,2023-01-01
+SKU-0043,Aurevo Eau de Parfum Pearl 75ml,Aurevo,EDP,Oriental,340.0,99.03,2023-01-01
+SKU-0044,Zevora Eau de Parfum Pure 50ml,Zevora,EDP,Woody,400.0,166.33,2023-01-01
+SKU-0045,Lumaris Eau de Parfum Cedar 100ml,Lumaris,EDP,Fresh,605.0,254.98,2023-01-01
+SKU-0046,Talivo Eau de Parfum Sultan 50ml,Talivo,EDP,Oriental,445.0,155.19,2023-01-01
+SKU-0047,Oudelle Eau de Parfum Amber 75ml,Oudelle,EDP,Fresh,395.0,153.95,2023-01-01
+SKU-0048,Sandrex Eau de Parfum Cedar 100ml,Sandrex,EDP,Woody,455.0,141.8,2023-01-01
+SKU-0049,Mirvanta Eau de Parfum Blanc 75ml,Mirvanta,EDP,Oriental,600.0,265.65,2023-01-01
+SKU-0050,Aurevo Eau de Parfum Majestic 75ml,Aurevo,EDP,Woody,555.0,164.75,2023-01-01
+SKU-0051,Talivo Eau de Parfum Midnight 100ml,Talivo,EDP,Floral,305.0,146.33,2023-01-01
+SKU-0052,Zevora Eau de Parfum Midnight 50ml,Zevora,EDP,Oriental,580.0,228.83,2023-01-01
+SKU-0053,Mirvanta Eau de Parfum Velvet 100ml,Mirvanta,EDP,Woody,635.0,300.38,2023-01-01
+SKU-0054,Quntar Eau de Parfum Noir 50ml,Quntar,EDP,Oriental,525.0,204.49,2023-01-01
+SKU-0055,Nerayn Eau de Parfum Royale 100ml,Nerayn,EDP,Woody,460.0,143.72,2023-01-01
+SKU-0056,Nerayn Eau de Parfum Silk 100ml,Nerayn,EDP,Woody,315.0,149.48,2023-01-01
+SKU-0057,Oudelle Eau de Parfum Majestic 100ml,Oudelle,EDP,Fresh,185.0,86.55,2023-01-01
+SKU-0058,Talivo Eau de Parfum Sultan 100ml,Talivo,EDP,Floral,260.0,82.14,2023-01-01
+SKU-0059,Aurevo Eau de Parfum Blanc 50ml,Aurevo,EDP,Floral,195.0,74.68,2023-01-01
+SKU-0060,Zevora Eau de Parfum Pearl 75ml,Zevora,EDP,Oriental,210.0,67.88,2023-01-01
+SKU-0061,Lumaris Eau de Parfum Gold 100ml,Lumaris,EDP,Floral,295.0,140.72,2023-01-01
+SKU-0062,Sandrex Eau de Parfum Noir 100ml,Sandrex,EDP,Oriental,215.0,86.73,2023-01-01
+SKU-0063,Quntar Eau de Parfum Amber 75ml,Quntar,EDP,Floral,605.0,236.63,2023-01-01
+SKU-0064,Oudelle Body Mist Pearl 250ml,Oudelle,Body Mist,Fresh Mist,95.0,44.04,2023-01-01
+SKU-0065,Talivo Body Mist Noir 150ml,Talivo,Body Mist,Floral Mist,105.0,46.38,2023-01-01
+SKU-0066,Nerayn Body Mist Silk 150ml,Nerayn,Body Mist,Fresh Mist,60.0,22.88,2023-01-01
+SKU-0067,Talivo Body Mist Amber 250ml,Talivo,Body Mist,Floral Mist,75.0,23.95,2023-01-01
+SKU-0068,Sandrex Body Mist Imperial 250ml,Sandrex,Body Mist,Fresh Mist,100.0,36.19,2023-01-01
+SKU-0069,Duneva Body Mist Velvet 150ml,Duneva,Body Mist,Floral Mist,55.0,20.14,2023-01-01
+SKU-0070,Talivo Body Mist Pearl 150ml,Talivo,Body Mist,Fresh Mist,70.0,23.29,2023-01-01
+SKU-0071,Aurevo Body Mist Pure 250ml,Aurevo,Body Mist,Floral Mist,65.0,25.5,2023-01-01
+SKU-0072,Quntar Body Mist Silk 250ml,Quntar,Body Mist,Fresh Mist,90.0,32.39,2023-01-01
+SKU-0073,Aurevo Body Mist Majestic 250ml,Aurevo,Body Mist,Fresh Mist,95.0,28.41,2023-01-01
+SKU-0074,Sandrex Body Mist Cedar 150ml,Sandrex,Body Mist,Fresh Mist,75.0,21.9,2023-01-01
+SKU-0075,Mirvanta Body Mist Majestic 150ml,Mirvanta,Body Mist,Fresh Mist,45.0,13.78,2023-01-01
+SKU-0076,Duneva Body Mist Pure 250ml,Duneva,Body Mist,Fresh Mist,105.0,47.28,2023-01-01
+SKU-0077,Sandrex Body Mist Amber 150ml,Sandrex,Body Mist,Floral Mist,50.0,20.36,2023-01-01
+SKU-0078,Nerayn Body Mist Amber 150ml,Nerayn,Body Mist,Fresh Mist,105.0,40.21,2023-01-01
+SKU-0079,Duneva Bakhoor Pure 80g,Duneva,Bakhoor,Bricks,60.0,19.05,2023-01-01
+SKU-0080,Zevora Bakhoor Noir 40g,Zevora,Bakhoor,Mamoul,125.0,58.58,2023-01-01
+SKU-0081,Oudelle Bakhoor Gold 120g,Oudelle,Bakhoor,Chips,85.0,25.23,2023-01-01
+SKU-0082,Mirvanta Bakhoor Majestic 120g,Mirvanta,Bakhoor,Bricks,215.0,65.93,2023-01-01
+SKU-0083,Zevora Bakhoor Silk 80g,Zevora,Bakhoor,Bricks,50.0,21.34,2023-01-01
+SKU-0084,Oudelle Bakhoor Cedar 80g,Oudelle,Bakhoor,Chips,210.0,73.23,2023-01-01
+SKU-0085,Talivo Bakhoor Gold 80g,Talivo,Bakhoor,Chips,105.0,47.02,2023-01-01
+SKU-0086,Zevora Bakhoor Pure 80g,Zevora,Bakhoor,Chips,75.0,33.13,2023-01-01
+SKU-0087,Nerayn Bakhoor Pearl 80g,Nerayn,Bakhoor,Chips,90.0,34.42,2023-01-01
+SKU-0088,Mirvanta Bakhoor Silk 40g,Mirvanta,Bakhoor,Chips,190.0,85.99,2023-01-01
+SKU-0089,Aurevo Bakhoor Pure 120g,Aurevo,Bakhoor,Chips,240.0,114.29,2023-01-01
+SKU-0090,Duneva Bakhoor Noir 120g,Duneva,Bakhoor,Bricks,295.0,101.78,2023-01-01
+SKU-0091,Talivo Bakhoor Pure 80g,Talivo,Bakhoor,Mamoul,135.0,64.5,2023-01-01
+SKU-0092,Lumaris Bakhoor Sultan 80g,Lumaris,Bakhoor,Bricks,290.0,111.39,2023-01-01
+SKU-0093,Mirvanta Gift Set Pure Box,Mirvanta,Gift Set,Ramadan Box,1410.0,402.94,2023-01-01
+SKU-0094,Oudelle Gift Set Imperial Trio,Oudelle,Gift Set,Signature Set,910.0,277.82,2023-01-01
+SKU-0095,Oudelle Gift Set Sultan Trio,Oudelle,Gift Set,Signature Set,1230.0,464.59,2023-01-01
+SKU-0096,Aurevo Gift Set Pure Trio,Aurevo,Gift Set,Signature Set,735.0,263.42,2023-01-01
+SKU-0097,Duneva Gift Set Majestic Luxury Box,Duneva,Gift Set,Signature Set,525.0,204.89,2023-01-01
+SKU-0098,Lumaris Gift Set Majestic Box,Lumaris,Gift Set,Signature Set,460.0,181.51,2023-01-01
+SKU-0099,Zevora Gift Set Silk Trio,Zevora,Gift Set,Ramadan Box,1430.0,440.21,2023-01-01
+SKU-0100,Aurevo Gift Set Majestic Trio,Aurevo,Gift Set,Ramadan Box,455.0,144.38,2023-01-01
+SKU-0101,Zevora Gift Set Sultan Box,Zevora,Gift Set,Eid Box,1115.0,455.19,2023-01-01
+SKU-0102,Sandrex Gift Set Cedar Luxury Box,Sandrex,Gift Set,Eid Box,1450.0,470.07,2023-01-01
+SKU-0103,Talivo Gift Set Cedar Luxury Box,Talivo,Gift Set,Signature Set,410.0,176.07,2023-01-01
+SKU-0104,Lumaris Gift Set Cedar Trio,Lumaris,Gift Set,Signature Set,475.0,136.83,2023-01-01
+SKU-0105,Zevora Cosmetics Royale Lip,Zevora,Cosmetics,Lip Care,85.0,35.67,2023-01-01
+SKU-0106,Nerayn Cosmetics Amber Lip,Nerayn,Cosmetics,Skin Care,60.0,27.23,2023-01-01
+SKU-0107,Quntar Cosmetics Velvet Lotion,Quntar,Cosmetics,Skin Care,65.0,21.33,2023-01-01
+SKU-0108,Sandrex Cosmetics Imperial Oil,Sandrex,Cosmetics,Hair Care,60.0,25.45,2023-01-01
+SKU-0109,Sandrex Cosmetics Pearl Oil,Sandrex,Cosmetics,Hair Care,135.0,54.79,2023-01-01
+SKU-0110,Sandrex Cosmetics Cedar Lotion,Sandrex,Cosmetics,Skin Care,50.0,21.39,2023-01-01
+SKU-0111,Quntar Cosmetics Sultan Lip,Quntar,Cosmetics,Lip Care,85.0,34.38,2023-01-01
+SKU-0112,Lumaris Cosmetics Noir Cream,Lumaris,Cosmetics,Hair Care,65.0,20.66,2023-01-01
+SKU-0113,Mirvanta Cosmetics Royale Cream,Mirvanta,Cosmetics,Lip Care,130.0,56.93,2023-01-01
+SKU-0114,Nerayn Cosmetics Majestic Oil,Nerayn,Cosmetics,Hair Care,95.0,36.5,2023-01-01
+SKU-0115,Nerayn Cosmetics Pearl Oil,Nerayn,Cosmetics,Skin Care,105.0,31.66,2023-01-01
+SKU-0116,Lumaris Cosmetics Midnight Cream,Lumaris,Cosmetics,Hair Care,175.0,62.21,2023-01-01
+SKU-0117,Duneva Cosmetics Royale Oil,Duneva,Cosmetics,Lip Care,145.0,42.89,2023-01-01
+SKU-0118,Sandrex Cosmetics Amber Lip,Sandrex,Cosmetics,Hair Care,155.0,44.55,2023-01-01
+SKU-0119,Duneva Cosmetics Royale Lip,Duneva,Cosmetics,Hair Care,110.0,43.22,2023-01-01
+SKU-0120,Mirvanta Cosmetics Sultan Lotion,Mirvanta,Cosmetics,Lip Care,125.0,35.55,2023-01-01
