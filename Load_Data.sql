@@ -24,7 +24,7 @@ GO
 
 
 /* ------------------------------------------------------------
-   Staging create tables in Staging Layer
+ create tables in Staging Layer
    ------------------------------------------------------------ */
 
 IF OBJECT_ID('stg.branches') IS NOT NULL DROP TABLE stg.branches;
@@ -98,3 +98,39 @@ CREATE TABLE stg.transaction_lines (
     is_return        TINYINT
 );
 GO
+
+
+/* ------------------------------------------------------------
+BULK INSERT
+   ------------------------------------------------------------ */
+
+DECLARE @path VARCHAR(260) = 'E:\deraah-h1fy26-customer-analytics\data\';
+
+DECLARE @sql NVARCHAR(MAX);
+
+SET @sql = N'BULK INSERT stg.branches FROM ''' + @path + N'branches.csv''
+  WITH (FORMAT = ''CSV'', FIRSTROW = 2, CODEPAGE = ''65001'', TABLOCK);';
+EXEC (@sql);
+
+SET @sql = N'BULK INSERT stg.products FROM ''' + @path + N'products.csv''
+  WITH (FORMAT = ''CSV'', FIRSTROW = 2, CODEPAGE = ''65001'', TABLOCK);';
+EXEC (@sql);
+
+SET @sql = N'BULK INSERT stg.customers FROM ''' + @path + N'customers.csv''
+  WITH (FORMAT = ''CSV'', FIRSTROW = 2, CODEPAGE = ''65001'', TABLOCK);';
+EXEC (@sql);
+
+SET @sql = N'BULK INSERT stg.promotions FROM ''' + @path + N'promotions.csv''
+  WITH (FORMAT = ''CSV'', FIRSTROW = 2, CODEPAGE = ''65001'', TABLOCK);';
+EXEC (@sql);
+
+SET @sql = N'BULK INSERT stg.transactions FROM ''' + @path + N'transactions.csv''
+  WITH (FORMAT = ''CSV'', FIRSTROW = 2, CODEPAGE = ''65001'', TABLOCK);';
+EXEC (@sql);
+
+SET @sql = N'BULK INSERT stg.transaction_lines FROM ''' + @path + N'transaction_lines.csv''
+  WITH (FORMAT = ''CSV'', FIRSTROW = 2, CODEPAGE = ''65001'', TABLOCK);';
+EXEC (@sql);
+GO
+
+
