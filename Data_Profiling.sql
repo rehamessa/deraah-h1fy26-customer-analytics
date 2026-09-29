@@ -63,3 +63,51 @@ WHERE close_date IS NOT NULL
 SELECT * 
 FROM stg.branches 
 WHERE open_date > '2026-06-30';
+
+/* ============================================================
+products
+   ============================================================ */
+
+-- Row count + duplicate sku
+
+SELECT COUNT(*) AS total_rows,
+       COUNT(DISTINCT sku) AS distinct_sku
+FROM stg.products;
+
+-- Nulls in key columns
+
+SELECT
+    SUM(CASE WHEN sku          IS NULL THEN 1 ELSE 0 END) AS null_sku,
+    SUM(CASE WHEN product_name IS NULL THEN 1 ELSE 0 END) AS null_name,
+    SUM(CASE WHEN brand        IS NULL THEN 1 ELSE 0 END) AS null_brand,
+    SUM(CASE WHEN category     IS NULL THEN 1 ELSE 0 END) AS null_category,
+    SUM(CASE WHEN sub_category IS NULL THEN 1 ELSE 0 END) AS null_sub_category,
+    SUM(CASE WHEN list_price   IS NULL THEN 1 ELSE 0 END) AS null_list_price,
+    SUM(CASE WHEN unit_cost    IS NULL THEN 1 ELSE 0 END) AS null_unit_cost
+FROM stg.products;
+
+-- Distinct values in categorical columns (look for unexpected values)
+
+SELECT category,
+       COUNT(*) AS n 
+FROM stg.products 
+GROUP BY category 
+ORDER BY category;
+
+-- Price sanity: negative, zero, or cost higher than price
+
+SELECT MIN(list_price) AS min_price,
+       MAX(list_price) AS max_price,
+       MIN(unit_cost) AS min_cost,
+       MAX(unit_cost) AS max_cost
+FROM stg.products;
+
+SELECT * 
+FROM stg.products
+WHERE list_price <= 0 OR unit_cost <= 0;
+
+SELECT * 
+FROM stg.products 
+WHERE unit_cost > list_price;
+
+
