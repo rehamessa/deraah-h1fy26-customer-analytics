@@ -1,136 +1,145 @@
 /* ============================================================
-   Deraah SDA Technical Assessment — Step 1: Load data into SQL Server
-   Loads the 6 CSVs into a raw "stg" (staging) schema
+   Deraah SDA — Load Staging Layer (stg) 
    ============================================================ */
 
-/* ------------------------------------------------------------
-CREATE DATABASE
------------------------------------------------------------- */
-
- Database
-IF DB_ID('Deraah_SDA') IS NULL
-    CREATE DATABASE Deraah_SDA;
-GO
 USE Deraah_SDA;
 GO
 
-/* ------------------------------------------------------------
-CREATE  SCHEMA
------------------------------------------------------------- */
+CREATE OR ALTER PROCEDURE stg.load_staging AS
+BEGIN
+	DECLARE @start_time DATETIME, @end_time DATETIME, @START_BATCH DATETIME, @END_BATCH DATETIME;
+	BEGIN TRY
+	SET @START_BATCH = GETDATE();
+		PRINT '------------------------------------------------';
+		PRINT 'Loading Staging Layer (stg)';
+		PRINT '=================================================================';
 
-IF SCHEMA_ID('stg') IS NULL
-    EXEC('CREATE SCHEMA stg');
+		--------------------------------------------------------
+		SET @start_time = GETDATE();
+		PRINT '>> Truncate Table: stg.branches';
+		TRUNCATE TABLE stg.branches;
+		PRINT '>> Insert data into Table: stg.branches';
+		BULK INSERT stg.branches
+		FROM 'E:\deraah-h1fy26-customer-analytics\data\branches.csv'
+		WITH (
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			ROWTERMINATOR = '0x0a',
+			Tablock
+		);
+		SET @end_time = GETDATE();
+		PRINT '>> Load Duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS VARCHAR) + ' SEC';
+		PRINT '*********************************************************************';
+
+		--------------------------------------------------------
+		SET @start_time = GETDATE();
+		PRINT '>> Truncate Table: stg.products';
+		TRUNCATE TABLE stg.products;
+		PRINT '>> Insert data into Table: stg.products';
+		BULK INSERT stg.products
+		FROM 'E:\deraah-h1fy26-customer-analytics\data\products.csv'
+		WITH (
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			ROWTERMINATOR = '0x0a',
+			Tablock
+		);
+		SET @end_time = GETDATE();
+		PRINT '>> Load Duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS VARCHAR) + ' SEC';
+		PRINT '*********************************************************************';
+
+		--------------------------------------------------------
+		SET @start_time = GETDATE();
+		PRINT '>> Truncate Table: stg.customers';
+		TRUNCATE TABLE stg.customers;
+		PRINT '>> Insert data into Table: stg.customers';
+		BULK INSERT stg.customers
+		FROM 'E:\deraah-h1fy26-customer-analytics\data\customers.csv'
+		WITH (
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			ROWTERMINATOR = '0x0a',
+			Tablock
+		);
+		SET @end_time = GETDATE();
+		PRINT '>> Load Duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS VARCHAR) + ' SEC';
+		PRINT '*********************************************************************';
+
+		--------------------------------------------------------
+		SET @start_time = GETDATE();
+		PRINT '>> Truncate Table: stg.promotions';
+		TRUNCATE TABLE stg.promotions;
+		PRINT '>> Insert data into Table: stg.promotions';
+		BULK INSERT stg.promotions
+		FROM 'E:\deraah-h1fy26-customer-analytics\data\promotions.csv'
+		WITH (
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			ROWTERMINATOR = '0x0a',
+			Tablock
+		);
+		SET @end_time = GETDATE();
+		PRINT '>> Load Duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS VARCHAR) + ' SEC';
+		PRINT '*********************************************************************';
+
+		--------------------------------------------------------
+		SET @start_time = GETDATE();
+		PRINT '>> Truncate Table: stg.transactions';
+		TRUNCATE TABLE stg.transactions;
+		PRINT '>> Insert data into Table: stg.transactions';
+		BULK INSERT stg.transactions
+		FROM 'E:\deraah-h1fy26-customer-analytics\data\transactions.csv'
+		WITH (
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			ROWTERMINATOR = '0x0a',
+			Tablock
+		);
+		SET @end_time = GETDATE();
+		PRINT '>> Load Duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS VARCHAR) + ' SEC';
+		PRINT '*********************************************************************';
+
+		--------------------------------------------------------
+		SET @start_time = GETDATE();
+		PRINT '>> Truncate Table: stg.transaction_lines';
+		TRUNCATE TABLE stg.transaction_lines;
+		PRINT '>> Insert data into Table: stg.transaction_lines';
+		BULK INSERT stg.transaction_lines
+		FROM 'E:\deraah-h1fy26-customer-analytics\data\transaction_lines.csv'
+		WITH (
+			FIRSTROW = 2,
+			FIELDTERMINATOR = ',',
+			ROWTERMINATOR = '0x0a',
+			Tablock
+		);
+		SET @end_time = GETDATE();
+		PRINT '>> Load Duration: ' + CAST(DATEDIFF(SECOND, @start_time, @end_time) AS VARCHAR) + ' SEC';
+		PRINT '*********************************************************************';
+
+		PRINT '=================================';
+		SET @END_BATCH = GETDATE();
+		PRINT '>> Load batch Duration: ' + CAST(DATEDIFF(SECOND, @START_BATCH, @END_BATCH) AS VARCHAR) + ' SEC';
+		PRINT '*********************************************************************';
+
+	END TRY
+	BEGIN CATCH
+		PRINT '=================================';
+		PRINT 'Error occurred during loading Staging layer';
+		PRINT 'ERROR MESSAGE: ' + ERROR_MESSAGE();
+		PRINT 'ERROR NUMBER: ' + CAST(ERROR_NUMBER() AS NVARCHAR);
+		PRINT 'ERROR STATE: ' + CAST(ERROR_STATE() AS NVARCHAR);
+	END CATCH;
+END;
 GO
 
+EXEC stg.load_staging;
 
 /* ------------------------------------------------------------
- create tables in Staging Layer
+   Sanity check
    ------------------------------------------------------------ */
-
-IF OBJECT_ID('stg.branches') IS NOT NULL DROP TABLE stg.branches;
-CREATE TABLE stg.branches (
-    branch_id     VARCHAR(10),
-    branch_name   VARCHAR(100),
-    city          VARCHAR(50),
-    region        VARCHAR(50),
-    store_format  VARCHAR(50),
-    area_sqm      INT,
-    open_date     DATE,
-    close_date    DATE NULL
-);
-
-IF OBJECT_ID('stg.products') IS NOT NULL DROP TABLE stg.products;
-CREATE TABLE stg.products (
-    sku           VARCHAR(20),
-    product_name  VARCHAR(150),
-    brand         VARCHAR(50),
-    category      VARCHAR(50),
-    sub_category  VARCHAR(50),
-    list_price    DECIMAL(12,2),
-    unit_cost     DECIMAL(12,2),
-    launch_date   DATE NULL
-);
-
-IF OBJECT_ID('stg.customers') IS NOT NULL DROP TABLE stg.customers;
-CREATE TABLE stg.customers (
-    customer_id        VARCHAR(10),
-    full_name          VARCHAR(100),
-    phone              VARCHAR(20),
-    email              VARCHAR(100),
-    city               VARCHAR(50),
-    home_branch_id     VARCHAR(10) NULL,
-    join_date          DATE,
-    loyalty_tier       VARCHAR(20),
-    marketing_consent  TINYINT NULL   -- 1/0, may contain NULLs — see F1
-);
-
-IF OBJECT_ID('stg.promotions') IS NOT NULL DROP TABLE stg.promotions;
-CREATE TABLE stg.promotions (
-    promo_id        VARCHAR(10),
-    promo_name      VARCHAR(100),
-    start_date      DATE,
-    end_date        DATE,
-    category_scope  VARCHAR(50),   -- a category name, or 'ALL'
-    discount_pct    DECIMAL(5,4)
-);
-
-IF OBJECT_ID('stg.transactions') IS NOT NULL DROP TABLE stg.transactions;
-CREATE TABLE stg.transactions (
-    txn_id          VARCHAR(15),
-    txn_datetime    DATETIME2(0),
-    branch_id       VARCHAR(10),
-    customer_id     VARCHAR(10) NULL,   -- blank = walk-in
-    channel         VARCHAR(20),
-    payment_method  VARCHAR(20),
-    txn_type        VARCHAR(10)         -- Sale / Return
-);
-
-IF OBJECT_ID('stg.transaction_lines') IS NOT NULL DROP TABLE stg.transaction_lines;
-CREATE TABLE stg.transaction_lines (
-    line_id          INT,
-    txn_id           VARCHAR(15),
-    sku              VARCHAR(20),
-    qty              INT,
-    unit_price       DECIMAL(12,2),
-    discount_amount  DECIMAL(12,2),
-    net_amount       DECIMAL(12,2),
-    promo_id         VARCHAR(10) NULL,
-    is_return        TINYINT
-);
-GO
-
-
-/* ------------------------------------------------------------
-BULK INSERT
-   ------------------------------------------------------------ */
-
-DECLARE @path VARCHAR(260) = 'E:\deraah-h1fy26-customer-analytics\data\';
-
-DECLARE @sql NVARCHAR(MAX);
-
-SET @sql = N'BULK INSERT stg.branches FROM ''' + @path + N'branches.csv''
-  WITH (FORMAT = ''CSV'', FIRSTROW = 2, CODEPAGE = ''65001'', TABLOCK);';
-EXEC (@sql);
-
-SET @sql = N'BULK INSERT stg.products FROM ''' + @path + N'products.csv''
-  WITH (FORMAT = ''CSV'', FIRSTROW = 2, CODEPAGE = ''65001'', TABLOCK);';
-EXEC (@sql);
-
-SET @sql = N'BULK INSERT stg.customers FROM ''' + @path + N'customers.csv''
-  WITH (FORMAT = ''CSV'', FIRSTROW = 2, CODEPAGE = ''65001'', TABLOCK);';
-EXEC (@sql);
-
-SET @sql = N'BULK INSERT stg.promotions FROM ''' + @path + N'promotions.csv''
-  WITH (FORMAT = ''CSV'', FIRSTROW = 2, CODEPAGE = ''65001'', TABLOCK);';
-EXEC (@sql);
-
-SET @sql = N'BULK INSERT stg.transactions FROM ''' + @path + N'transactions.csv''
-  WITH (FORMAT = ''CSV'', FIRSTROW = 2, CODEPAGE = ''65001'', TABLOCK);';
-EXEC (@sql);
-
-SET @sql = N'BULK INSERT stg.transaction_lines FROM ''' + @path + N'transaction_lines.csv''
-  WITH (FORMAT = ''CSV'', FIRSTROW = 2, CODEPAGE = ''65001'', TABLOCK);';
-EXEC (@sql);
-GO
-
-
+SELECT 'branches' AS tbl, COUNT(*) AS rows_loaded FROM stg.branches
+UNION ALL SELECT 'products', COUNT(*) FROM stg.products
+UNION ALL SELECT 'customers', COUNT(*) FROM stg.customers
+UNION ALL SELECT 'promotions', COUNT(*) FROM stg.promotions
+UNION ALL SELECT 'transactions', COUNT(*) FROM stg.transactions
+UNION ALL SELECT 'transaction_lines', COUNT(*) FROM stg.transaction_lines;
