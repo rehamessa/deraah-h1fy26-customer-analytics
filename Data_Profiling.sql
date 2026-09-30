@@ -182,3 +182,38 @@ SELECT *
 FROM stg.customers 
 WHERE join_date > '2026-06-30';
 
+--total_affected rows by duplicated customer
+
+SELECT SUM(n) AS total_affected_rows
+FROM (
+    SELECT email, COUNT(*) AS n
+    FROM stg.customers
+    WHERE email IS NOT NULL
+    GROUP BY email
+    HAVING COUNT(*) > 1
+) x;
+
+-- total rows has issue phone
+SELECT COUNT(*) AS n
+FROM stg.customers
+WHERE phone IN ('N/A','966','0000000000','123456','0512345','5512345678','05123456789','05X1234567');
+
+-- total customer in the future date
+
+SELECT COUNT(*) AS n
+FROM stg.customers
+WHERE join_date > '2026-06-30';
+
+/* ============================================================
+   promotions
+   ============================================================ */
+
+-- Row count + duplicate promo_id
+
+SELECT COUNT(*) AS total_rows, 
+       COUNT(DISTINCT promo_id) AS distinct_promo_id
+FROM stg.promotions;
+
+SELECT * FROM stg.promotions ORDER BY start_date;
+
+
