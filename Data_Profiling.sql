@@ -216,4 +216,103 @@ FROM stg.promotions;
 
 SELECT * FROM stg.promotions ORDER BY start_date;
 
+-- Sanity: end before start, discount out of [0,1] range
 
+SELECT *
+FROM stg.promotions 
+WHERE end_date < start_date;
+
+SELECT * 
+FROM stg.promotions 
+WHERE discount_pct < 0 OR discount_pct > 1;
+
+SELECT category_scope, 
+       COUNT(*) AS n 
+FROM stg.promotions 
+GROUP BY category_scope;
+
+/* ============================================================
+  transactions
+   ============================================================ */
+
+   -- Row count + duplicate  txn_id
+
+SELECT COUNT(*) AS total_rows, 
+       COUNT(DISTINCT txn_id) AS distinct_txn_id
+FROM stg.transactions;
+
+
+-- Nulls in key columns
+
+SELECT
+    SUM(CASE WHEN txn_id         IS NULL THEN 1 ELSE 0 END) AS null_txn_id,
+    SUM(CASE WHEN txn_datetime   IS NULL THEN 1 ELSE 0 END) AS null_txn_datetime,
+    SUM(CASE WHEN branch_id      IS NULL THEN 1 ELSE 0 END) AS null_branch_id,
+    SUM(CASE WHEN customer_id    IS NULL THEN 1 ELSE 0 END) AS null_customer_id, 
+    SUM(CASE WHEN channel        IS NULL THEN 1 ELSE 0 END) AS null_channel,
+    SUM(CASE WHEN payment_method IS NULL THEN 1 ELSE 0 END) AS null_payment_method,
+    SUM(CASE WHEN txn_type       IS NULL THEN 1 ELSE 0 END) AS null_txn_type
+FROM stg.transactions;
+
+
+-- Duplicate txn_id 
+SELECT txn_id, 
+       COUNT(*) AS n 
+FROM stg.transactions 
+GROUP BY txn_id 
+HAVING COUNT(*) > 1;
+
+-- Distinct values in categorical columns (look for unexpected values)
+
+SELECT channel, 
+       COUNT(*) AS n 
+FROM stg.transactions 
+GROUP BY channel 
+ORDER BY channel;
+
+SELECT payment_method, 
+       COUNT(*) AS n 
+FROM stg.transactions 
+GROUP BY payment_method 
+ORDER BY payment_method;
+
+SELECT txn_type, 
+       COUNT(*) AS n 
+FROM stg.transactions 
+GROUP BY txn_type 
+ORDER BY txn_type;
+
+
+-- Date range
+
+SELECT MIN(txn_datetime) AS min_dt, 
+       MAX(txn_datetime) AS max_dt 
+FROM stg.transactions;
+
+SELECT * 
+FROM stg.transactions 
+WHERE txn_datetime < '2025-01-01' OR txn_datetime > '2026-06-30 23:59:59';
+
+-- transactions whose branch_id / customer_id (FK) don't exist in dimension tables
+
+SELECT t.branch_id, 
+       COUNT(*) AS n
+FROM stg.transactions t
+LEFT JOIN stg.branches b 
+ON t.branch_id = b.branch_id
+WHERE b.branch_id IS NULL
+GROUP BY t.branch_id;
+
+SELECT t.customer_id, 
+       COUNT(*) AS n
+FROM stg.transactions t
+LEFT JOIN stg.customers c 
+ON t.customer_id = c.customer_id
+WHERE t.customer_id IS NOT NULL AND c.customer_id IS NULL
+GROUP BY t.customer_id;
+
+-- Share of walk-ins
+
+SELECT
+    SUM(CASE WHEN customer_id IS NULL THEN 1 ELSE 0 END) * 1.0 / COUNT(*) AS walkin_share
+FROM stg.transactions;
