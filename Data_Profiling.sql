@@ -316,3 +316,122 @@ GROUP BY t.customer_id;
 SELECT
     SUM(CASE WHEN customer_id IS NULL THEN 1 ELSE 0 END) * 1.0 / COUNT(*) AS walkin_share
 FROM stg.transactions;
+
+-- total dupliactes raws
+
+SELECT SUM(n) AS total_affected_rows
+FROM (
+    SELECT txn_id, COUNT(*) AS n
+    FROM stg.transactions
+    GROUP BY txn_id
+    HAVING COUNT(*) > 1
+) x;
+
+-- total transaction >June-2026
+
+SELECT COUNT(*) AS n
+FROM stg.transactions
+WHERE txn_datetime > '2026-06-30 23:59:59';
+
+
+/* ============================================================
+    transaction_lines
+   ============================================================ */
+
+   -- Row count + duplicate promo_id
+
+SELECT COUNT(*) AS total_rows, 
+       COUNT(DISTINCT line_id) AS distinct_line_id
+FROM stg.transaction_lines;
+
+-- Nulls in key columns
+
+SELECT
+    SUM(CASE WHEN line_id          IS NULL THEN 1 ELSE 0 END) AS null_line_id,
+    SUM(CASE WHEN txn_id           IS NULL THEN 1 ELSE 0 END) AS null_txn_id,
+    SUM(CASE WHEN sku              IS NULL THEN 1 ELSE 0 END) AS null_sku,
+    SUM(CASE WHEN qty              IS NULL THEN 1 ELSE 0 END) AS null_qty,
+    SUM(CASE WHEN unit_price       IS NULL THEN 1 ELSE 0 END) AS null_unit_price,
+    SUM(CASE WHEN discount_amount  IS NULL THEN 1 ELSE 0 END) AS null_discount_amount,
+    SUM(CASE WHEN net_amount       IS NULL THEN 1 ELSE 0 END) AS null_net_amount,
+    SUM(CASE WHEN promo_id         IS NULL THEN 1 ELSE 0 END) AS null_promo_id,     -- expected
+    SUM(CASE WHEN is_return        IS NULL THEN 1 ELSE 0 END) AS null_is_return
+FROM stg.transaction_lines;
+
+-- txn_id / sku / promo_id (FK)
+
+SELECT tl.txn_id, 
+       COUNT(*) AS n
+FROM stg.transaction_lines tl
+LEFT JOIN stg.transactions t 
+ON tl.txn_id = t.txn_id
+WHERE t.txn_id IS NULL
+GROUP BY tl.txn_id;
+
+SELECT tl.sku, 
+       COUNT(*) AS n
+FROM stg.transaction_lines tl
+LEFT JOIN stg.products p 
+ON tl.sku = p.sku
+WHERE p.sku IS NULL
+GROUP BY tl.sku;
+
+SELECT tl.promo_id, 
+       COUNT(*) AS n
+FROM stg.transaction_lines tl
+LEFT JOIN stg.promotions pr 
+ON tl.promo_id = pr.promo_id
+WHERE tl.promo_id IS NOT NULL AND pr.promo_id IS NULL
+GROUP BY tl.promo_id;
+
+-- check consistency
+
+SELECT is_return,
+       SUM(CASE WHEN qty > 0 THEN 1 ELSE 0 END)        AS positive_qty,
+       SUM(CASE WHEN qty < 0 THEN 1 ELSE 0 END)        AS negative_qty,
+       SUM(CASE WHEN net_amount > 0 THEN 1 ELSE 0 END) AS positive_net,
+       SUM(CASE WHEN net_amount < 0 THEN 1 ELSE 0 END) AS negative_net
+FROM stg.transaction_lines
+GROUP BY is_return;
+
+-- net_amount formula check
+
+SELECT COUNT(*) AS mismatched_rows
+FROM stg.transaction_lines
+WHERE ABS(net_amount - (qty * unit_price - discount_amount)) > 0.01;
+
+-- Ranges: look for absurd qty or negative prices
+
+SELECT MIN(qty) AS min_qty, 
+       MAX(qty) AS max_qty,
+       MIN(unit_price) AS min_price, 
+       MAX(unit_price) AS max_price,
+       MIN(discount_amount) AS min_discount, 
+       MAX(discount_amount) AS max_discount,
+       MIN(net_amount) AS min_net, 
+       MAX(net_amount) AS max_net
+FROM stg.transaction_lines;
+
+-- discount_amount bigger than gross
+
+SELECT COUNT(*) AS n
+FROM stg.transaction_lines
+WHERE discount_amount > (qty * unit_price) AND is_return = 0;
+
+-- raws have negative amount or price
+SELECT line_id, 
+       txn_id, sku, qty, unit_price, discount_amount, net_amount, is_return
+FROM stg.transaction_lines
+WHERE is_return = 0 AND (qty < 0 OR net_amount < 0);
+
+-- total raws unit_price equal 0
+
+SELECT COUNT(*) AS n 
+FROM stg.transaction_lines 
+WHERE unit_price = 0;
+
+-- total raws discount_amount < 0
+
+SELECT COUNT(*) AS n 
+FROM stg.transaction_lines 
+WHERE discount_amount < 0;
