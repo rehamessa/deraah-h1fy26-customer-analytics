@@ -110,4 +110,75 @@ SELECT *
 FROM stg.products 
 WHERE unit_cost > list_price;
 
+/* ============================================================
+   customers
+   ============================================================ */
+
+-- Row count + duplicate customer_id
+
+SELECT COUNT(*) AS total_rows,
+       COUNT(DISTINCT customer_id) AS distinct_customer_id
+FROM stg.customers;
+
+-- Nulls in key columns
+
+SELECT
+    SUM(CASE WHEN customer_id       IS NULL THEN 1 ELSE 0 END) AS null_customer_id,
+    SUM(CASE WHEN full_name         IS NULL THEN 1 ELSE 0 END) AS null_full_name,
+    SUM(CASE WHEN phone             IS NULL THEN 1 ELSE 0 END) AS null_phone,
+    SUM(CASE WHEN email             IS NULL THEN 1 ELSE 0 END) AS null_email,
+    SUM(CASE WHEN city              IS NULL THEN 1 ELSE 0 END) AS null_city,
+    SUM(CASE WHEN home_branch_id    IS NULL THEN 1 ELSE 0 END) AS null_home_branch,
+    SUM(CASE WHEN join_date         IS NULL THEN 1 ELSE 0 END) AS null_join_date,
+    SUM(CASE WHEN loyalty_tier      IS NULL THEN 1 ELSE 0 END) AS null_loyalty_tier,
+    SUM(CASE WHEN marketing_consent IS NULL THEN 1 ELSE 0 END) AS null_marketing_consent
+FROM stg.customers;
+
+-- Distinct values in categorical columns (look for unexpected values)
+
+SELECT loyalty_tier,
+       COUNT(*) AS n 
+FROM stg.customers 
+GROUP BY loyalty_tier 
+ORDER BY loyalty_tier;
+
+SELECT marketing_consent, 
+       COUNT(*) AS n
+FROM stg.customers 
+GROUP BY marketing_consent;
+
+-- Duplicate email / phone 
+
+SELECT email, 
+COUNT(*) AS n 
+FROM stg.customers 
+WHERE email IS NOT NULL 
+GROUP BY email 
+HAVING COUNT(*) > 1;
+
+SELECT phone, 
+       COUNT(*) AS n 
+FROM stg.customers 
+WHERE phone IS NOT NULL 
+GROUP BY phone 
+HAVING COUNT(*) > 1;
+
+
+-- home_branch_id (FK) values that don't exist in stg.branches
+SELECT c.home_branch_id,
+       COUNT(*) AS n
+FROM stg.customers c
+LEFT JOIN stg.branches b 
+ON c.home_branch_id = b.branch_id
+WHERE c.home_branch_id IS NOT NULL AND b.branch_id IS NULL
+GROUP BY c.home_branch_id;
+
+-- join_date in the future or before the business existed
+SELECT MIN(join_date) AS min_join,
+       MAX(join_date) AS max_join 
+FROM stg.customers;
+
+SELECT * 
+FROM stg.customers 
+WHERE join_date > '2026-06-30';
 
