@@ -46,5 +46,27 @@ WHERE c.customer_id = m.canonical_customer_id
   AND c.join_date <= '2026-06-30';
 GO
 
+/* ------------------------------------------------------------
+ transactions clean --> dedupe txn_id (Issue #6 - 74 rows)
+drop future-dated rows (Issue #7 - 5 rows) remap customer_id to its canonical id
+------------------------------------------------------------*/
 
+CREATE OR ALTER VIEW slv.transactions AS
+SELECT
+    t.txn_id,
+    t.txn_datetime,
+    t.branch_id,
+    COALESCE(m.canonical_customer_id, t.customer_id) AS customer_id,
+    t.channel,
+    t.payment_method,
+    t.txn_type
+FROM (
+    SELECT *,
+        ROW_NUMBER() OVER (PARTITION BY txn_id ORDER BY txn_datetime) AS rn
+    FROM stg.transactions
+) t
+LEFT JOIN slv.customer_map m ON t.customer_id = m.customer_id
+WHERE t.rn = 1
+  AND t.txn_datetime <= '2026-06-30 23:59:59';
+GO
 
