@@ -10,7 +10,7 @@ IF SCHEMA_ID('slv') IS NULL
 GO
 
 /* ------------------------------------------------------------
-branches_clean --> drop the QA/test branch (Issue #1)
+branches clean --> drop the QA/test branch (Issue #1)
  ------------------------------------------------------------*/
 
 CREATE OR ALTER VIEW slv.branches AS
@@ -35,7 +35,7 @@ FROM stg.customers;
 GO
 
 /* ------------------------------------------------------------
-customers_clean --> one row per customer
+customers clean --> one row per customer
 future join_dates excluded from the clean  (Issue #5 - 4 rows)
  ------------------------------------------------------------*/
 CREATE OR ALTER VIEW slv.customers AS
