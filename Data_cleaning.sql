@@ -70,3 +70,25 @@ WHERE t.rn = 1
   AND t.txn_datetime <= '2026-06-30 23:59:59';
 GO
 
+/* transaction_lines clean -->
+- drop lines on FK SKUs not in products (Issue #8 - 9 rows)
+- drop lines whose header didn't survive dedup/future-date cut
+- fix mislabeled is_return flag (Issue #9 - 25 rows)
+- fix negative discount_amount (Issue #11 - 142 rows) and recompute net_amount to stay consistent with the fix
+------------------------------------------------------------*/
+CREATE OR ALTER VIEW slv.transaction_lines AS
+SELECT
+    tl.line_id,
+    tl.txn_id,
+    tl.sku,
+    tl.qty,
+    tl.unit_price,
+    ABS(tl.discount_amount) AS discount_amount,
+    tl.qty * tl.unit_price - ABS(tl.discount_amount) AS net_amount,
+    tl.promo_id,
+    CASE WHEN tl.is_return = 0 AND tl.qty < 0 THEN 1 ELSE tl.is_return END AS is_return
+FROM stg.transaction_lines tl
+WHERE EXISTS (SELECT 1 FROM stg.products p WHERE p.sku = tl.sku)
+  AND EXISTS (SELECT 1 FROM slv.transactions t WHERE t.txn_id = tl.txn_id);
+GO
+
