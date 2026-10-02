@@ -92,3 +92,27 @@ WHERE EXISTS (SELECT 1 FROM stg.products p WHERE p.sku = tl.sku)
   AND EXISTS (SELECT 1 FROM slv.transactions t WHERE t.txn_id = tl.txn_id);
 GO
 
+/* ------------------------------------------------------------
+   Quick check --> row counts before/after cleaning
+   ------------------------------------------------------------ */
+SELECT 'branches'          AS tbl,
+(SELECT COUNT(*) FROM stg.branches)          AS raw_rows,
+(SELECT COUNT(*) FROM slv.branches)          AS clean_rows
+
+UNION ALL
+
+SELECT 'customers',
+(SELECT COUNT(*) FROM stg.customers),                
+(SELECT COUNT(*) FROM slv.customers)
+
+UNION ALL
+
+SELECT 'transactions',            
+(SELECT COUNT(*) FROM stg.transactions),             
+(SELECT COUNT(*) FROM slv.transactions)
+
+UNION ALL
+
+SELECT 'transaction_lines',       
+(SELECT COUNT(*) FROM stg.transaction_lines),        
+(SELECT COUNT(*) FROM slv.transaction_lines);
