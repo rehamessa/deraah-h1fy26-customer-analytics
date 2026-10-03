@@ -39,4 +39,20 @@ CREATE TABLE marts.dim_branch (
     close_date    DATE NULL
 );
 
+/* ------------------------------------------------------------
+-- dim_product 
+------------------------------------------------------------*/
+CREATE TABLE marts.dim_product (
+    product_key   INT IDENTITY PRIMARY KEY,
+    sku           VARCHAR(50) NOT NULL UNIQUE,
+    product_name  VARCHAR(50),
+    brand         VARCHAR(50),
+    category      VARCHAR(50),
+    sub_category  VARCHAR(50),
+    list_price    DECIMAL,
+    unit_cost     DECIMAL
+);
+
+
+
 
