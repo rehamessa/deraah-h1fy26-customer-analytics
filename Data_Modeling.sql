@@ -51,12 +51,29 @@ SELECT TOP 10
     p.sku,
     p.product_name,
     p.category,
-    SUM(tl.qty)        AS units,
-    SUM(tl.net_amount)  AS net_sales
+    SUM(tl.qty)AS units,
+    SUM(tl.net_amount)AS net_sales
 FROM slv.transaction_lines tl
 JOIN slv.transactions t ON tl.txn_id = t.txn_id
-JOIN stg.products p           ON tl.sku = p.sku   -- products had no DQ issues, so used as-is
+JOIN stg.products p           ON tl.sku = p.sku   -- products had no DQ issues
 WHERE t.txn_datetime >= '2026-02-18'
   AND t.txn_datetime <  '2026-03-20'              -- 19 Mar inclusive
 GROUP BY p.sku, p.product_name, p.category
+ORDER BY net_sales DESC;
+
+/* B3 ------------------------------------------------------------
+H1 2026, Sale transactions only: number of transactions, average basket value (Net Sales / transactions) and units per transaction(UPT), by channel*/
+
+SELECT
+    t.channel,
+    COUNT(DISTINCT t.txn_id)AS num_transactions,
+    SUM(tl.net_amount) AS net_sales,
+    SUM(tl.qty) AS total_units,
+    ROUND(SUM(tl.net_amount) / COUNT(DISTINCT t.txn_id), 2) AS avg_basket_value,
+    ROUND(SUM(tl.qty) * 1.0 / COUNT(DISTINCT t.txn_id), 2) AS units_per_transaction
+FROM slv.transactions t
+JOIN slv.transaction_lines tl ON t.txn_id = tl.txn_id
+WHERE t.txn_type = 'Sale'
+  AND t.txn_datetime >= '2026-01-01' AND t.txn_datetime < '2026-07-01'
+GROUP BY t.channel
 ORDER BY net_sales DESC;
