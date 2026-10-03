@@ -97,3 +97,19 @@ ON t.customer_id = dc.customer_id
 LEFT JOIN marts.dim_promotion dpr  
 ON tl.promo_id = dpr.promo_id;
 GO
+
+/* ------------------------------------------------------------
+   Sanity check
+   ------------------------------------------------------------ */
+SELECT 'dim_date'AS tbl,
+COUNT(*) AS rows_loaded FROM marts.dim_date
+UNION ALL SELECT 'dim_branch',      
+COUNT(*) FROM marts.dim_branch
+UNION ALL SELECT 'dim_product',     
+COUNT(*) FROM marts.dim_product
+UNION ALL SELECT 'dim_customer',    
+COUNT(*) FROM marts.dim_customer
+UNION ALL SELECT 'dim_promotion',   
+COUNT(*) FROM marts.dim_promotion
+UNION ALL SELECT 'fct_sales_lines', 
+COUNT(*) FROM marts.fct_sales_lines;
