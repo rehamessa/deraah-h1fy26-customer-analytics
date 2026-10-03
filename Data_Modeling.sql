@@ -125,3 +125,36 @@ FROM (
        OR (t.txn_datetime >= '2026-01-01' AND t.txn_datetime < '2026-07-01')
 ) total;
 
+/* B5 ------------------------------------------------------------
+- Monthly active customers for each month of H1 2026
+-(identified customers with >=1 Sale transaction in the month)*/
+
+SELECT
+    MONTH(t.txn_datetime)               AS month_num,
+    COUNT(DISTINCT t.customer_id)       AS active_customers
+FROM slv.transactions t
+WHERE t.txn_type = 'Sale'
+  AND t.customer_id IS NOT NULL
+  AND t.txn_datetime >= '2026-01-01' AND t.txn_datetime < '2026-07-01'
+GROUP BY MONTH(t.txn_datetime)
+ORDER BY month_num;
+
+-- 2- Repeat rate for H1 2026: share of customers who bought in
+--     H1 2026 who made 2+ Sale transactions in that half-year.
+
+WITH cust_txn_counts AS (
+    SELECT
+        t.customer_id,
+        COUNT(DISTINCT t.txn_id) AS n_txn
+    FROM slv.transactions t
+    WHERE t.txn_type = 'Sale'
+      AND t.customer_id IS NOT NULL
+      AND t.txn_datetime >= '2026-01-01' AND t.txn_datetime < '2026-07-01'
+    GROUP BY t.customer_id
+)
+SELECT
+    COUNT(*)                                                       AS customers_who_bought,
+    SUM(CASE WHEN n_txn >= 2 THEN 1 ELSE 0 END)                    AS repeat_customers,
+    ROUND(SUM(CASE WHEN n_txn >= 2 THEN 1 ELSE 0 END) * 100.0
+          / COUNT(*), 1)                                           AS repeat_rate_pct
+FROM cust_txn_counts;
