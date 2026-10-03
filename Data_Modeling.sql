@@ -77,3 +77,51 @@ WHERE t.txn_type = 'Sale'
   AND t.txn_datetime >= '2026-01-01' AND t.txn_datetime < '2026-07-01'
 GROUP BY t.channel
 ORDER BY net_sales DESC;
+
+/* B4 ------------------------------------------------------------
+-- Like-for-like (LFL) growth, H1 2026 vs H1 2025. A branch is LFL
+-- only if it traded for the whole of both periods (open on or
+-- before 1 Jan 2025 and not closed before 30 Jun 2026)*/
+
+-- Step 1: how many branches qualify as LFL
+
+SELECT COUNT(*) AS lfl_branch_count
+FROM slv.branches
+WHERE open_date <= '2025-01-01'
+  AND (close_date IS NULL OR close_date >= '2026-06-30');
+
+-- Step 2: LFL growth % - same branches only, both periods
+SELECT
+    net_sales_h1_2025,
+    net_sales_h1_2026,
+    ROUND((net_sales_h1_2026 - net_sales_h1_2025) * 100.0
+          / NULLIF(net_sales_h1_2025, 0), 1) AS lfl_growth_pct
+FROM (
+    SELECT
+        SUM(CASE WHEN t.txn_datetime < '2025-07-01' THEN tl.net_amount ELSE 0 END) AS net_sales_h1_2025,
+        SUM(CASE WHEN t.txn_datetime >= '2026-01-01' THEN tl.net_amount ELSE 0 END) AS net_sales_h1_2026
+    FROM slv.transaction_lines tl
+    JOIN slv.transactions t ON tl.txn_id = t.txn_id
+    JOIN slv.branches b     ON t.branch_id = b.branch_id
+    WHERE b.open_date <= '2025-01-01'
+      AND (b.close_date IS NULL OR b.close_date >= '2026-06-30')
+      AND ((t.txn_datetime >= '2025-01-01' AND t.txn_datetime < '2025-07-01')
+        OR (t.txn_datetime >= '2026-01-01' AND t.txn_datetime < '2026-07-01'))
+) lfl;
+
+-- Step 3: TOTAL growth %  all branches, for comparison
+SELECT
+    net_sales_h1_2025,
+    net_sales_h1_2026,
+    ROUND((net_sales_h1_2026 - net_sales_h1_2025) * 100.0
+          / NULLIF(net_sales_h1_2025, 0), 1) AS total_growth_pct
+FROM (
+    SELECT
+        SUM(CASE WHEN t.txn_datetime < '2025-07-01' THEN tl.net_amount ELSE 0 END) AS net_sales_h1_2025,
+        SUM(CASE WHEN t.txn_datetime >= '2026-01-01' THEN tl.net_amount ELSE 0 END) AS net_sales_h1_2026
+    FROM slv.transaction_lines tl
+    JOIN slv.transactions t ON tl.txn_id = t.txn_id
+    WHERE (t.txn_datetime >= '2025-01-01' AND t.txn_datetime < '2025-07-01')
+       OR (t.txn_datetime >= '2026-01-01' AND t.txn_datetime < '2026-07-01')
+) total;
+
