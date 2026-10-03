@@ -23,3 +23,20 @@ CREATE TABLE marts.dim_date (
     [year]        INT,
     is_weekend    BIT
 );
+
+/*------------------------------------------------------------
+-- dim_branch 
+ ------------------------------------------------------------*/
+CREATE TABLE marts.dim_branch (
+    branch_key    INT IDENTITY PRIMARY KEY,   -- surrogate key
+    branch_id     VARCHAR(10) NOT NULL UNIQUE, -- natural key from source
+    branch_name   VARCHAR(100),
+    city          VARCHAR(50),
+    region        VARCHAR(50),
+    store_format  VARCHAR(50),
+    area_sqm      INT,
+    open_date     DATE,
+    close_date    DATE NULL
+);
+
+
