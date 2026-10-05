@@ -45,6 +45,8 @@ GROUP BY c.cohort_month
 ORDER BY c.cohort_month;
 
 
+
+
 /*C2 ------------------------------------------------------------
 -- RFM segmentation as of 30 Jun 2026, window 1 Jul 2025-30 Jun 2026,
 -- identified customers with >=1 Sale in that window*/
@@ -141,3 +143,50 @@ SELECT
     ROUND(SUM(CASE WHEN cf.is_churned = 1 THEN ns.net_sales_2025 ELSE 0 END) * 100.0/ SUM(ns.net_sales_2025), 1) AS pct_of_2025_net_sales_from_churned
 FROM churn_flag cf
 JOIN net_sales_2025 ns ON cf.customer_id = ns.customer_id;
+
+
+/* C4 ------------------------------------------------------------
+ Median days between consecutive purchase days per customer, by
+ loyalty tier (customers with >= 2 distinct purchase days, whole period)*/
+
+WITH purchase_dates AS (
+    SELECT DISTINCT dc.customer_id, dd.[date] AS purchase_date
+    FROM marts.fct_sales_lines f
+    JOIN marts.dim_date dd     
+    ON f.date_key = dd.date_key
+    JOIN marts.dim_customer dc 
+    ON f.customer_key = dc.customer_key
+    WHERE f.txn_type = 'Sale'
+),
+gaps AS (
+    SELECT
+        customer_id,
+        DATEDIFF(DAY, LAG(purchase_date) OVER (PARTITION BY customer_id ORDER BY purchase_date), purchase_date) AS gap_days
+    FROM purchase_dates
+),
+customer_median_gap AS (
+    -- PERCENTILE_CONT in SQL Server always requires an OVER() clause,
+    -- even when used as a per-group aggregate - so we partition by
+    -- customer_id and DISTINCT down to one row per customer instead
+    -- of a plain GROUP BY.
+    SELECT DISTINCT
+        customer_id,
+        PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY gap_days) OVER (PARTITION BY customer_id) AS median_gap_days
+    FROM gaps
+    WHERE gap_days IS NOT NULL      -- drops customers with only 1 purchase day (no gap to measure)
+),
+tier_data AS (
+    SELECT
+        dc.loyalty_tier,
+        cmg.customer_id,
+        COUNT(*)     OVER (PARTITION BY dc.loyalty_tier) AS customers_with_2plus_purchase_days,
+        PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY cmg.median_gap_days) OVER (PARTITION BY dc.loyalty_tier) AS tier_median_gap_days
+    FROM customer_median_gap cmg
+    JOIN marts.dim_customer dc ON cmg.customer_id = dc.customer_id
+)
+SELECT DISTINCT
+    loyalty_tier,
+    customers_with_2plus_purchase_days,
+    ROUND(tier_median_gap_days, 1) AS tier_median_gap_days
+FROM tier_data
+ORDER BY tier_median_gap_days;
