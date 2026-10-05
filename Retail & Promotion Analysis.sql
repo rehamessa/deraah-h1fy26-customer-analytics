@@ -79,3 +79,12 @@ WHERE dd.[date] BETWEEN '2026-01-01' AND '2026-06-30'
 GROUP BY p.category
 ORDER BY return_rate_pct DESC;
 
+/* D3 ------------------------------------------------------------
+-- Ramadan calendar-shift check: confirms Ramadan 2025 vs 2026 promo
+-- windows from the promotions table, to support the written answer*/
+
+SELECT promo_id, promo_name, start_date, end_date
+FROM stg.promotions
+WHERE promo_name LIKE '%Ramadan%' OR promo_name LIKE '%Eid al-Fitr%'
+ORDER BY start_date;
+
