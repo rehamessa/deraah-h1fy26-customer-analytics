@@ -86,11 +86,58 @@ segmented AS (
     FROM scored
 )
 
+/* C3 ------------------------------------------------------------
+Churn--> among customers who bought (Sale) in calendar 2025
+how many have last Sale > 180 days before 30 Jun 2026? 
+Count, churn %, and their share of 2025 Net Sales*/
+
+
+WITH customers_2025 AS (
+    SELECT DISTINCT dc.customer_id
+    FROM marts.fct_sales_lines f
+    JOIN marts.dim_date dd     
+    ON f.date_key = dd.date_key
+    JOIN marts.dim_customer dc 
+    ON f.customer_key = dc.customer_key
+    WHERE f.txn_type = 'Sale' AND dd.[date] BETWEEN '2025-01-01' AND '2025-12-31'
+),
+
+last_sale AS (
+    SELECT dc.customer_id, 
+    MAX(dd.[date]) AS last_sale_date
+    FROM marts.fct_sales_lines f
+    JOIN marts.dim_date dd     
+    ON f.date_key = dd.date_key
+    JOIN marts.dim_customer dc 
+    ON f.customer_key = dc.customer_key
+    WHERE f.txn_type = 'Sale'
+    GROUP BY dc.customer_id
+),
+
+churn_flag AS (
+    SELECT
+        c.customer_id,
+        CASE WHEN DATEDIFF(DAY, ls.last_sale_date, '2026-06-30') > 180 THEN 1 ELSE 0 END AS is_churned
+    FROM customers_2025 c
+    JOIN last_sale ls ON c.customer_id = ls.customer_id
+),
+
+net_sales_2025 AS (
+    SELECT dc.customer_id,
+    SUM(f.net_amount) AS net_sales_2025
+    FROM marts.fct_sales_lines f
+    JOIN marts.dim_date dd     
+    ON f.date_key = dd.date_key
+    JOIN marts.dim_customer dc
+    ON f.customer_key = dc.customer_key
+    WHERE dd.[date] BETWEEN '2025-01-01' AND '2025-12-31'
+    GROUP BY dc.customer_id
+)
+
 SELECT
-    segment,
-    COUNT(*)AS customers,
-    SUM(monetary)AS net_sales,
-    ROUND(SUM(monetary) * 100.0 / SUM(SUM(monetary)) OVER (), 1) AS pct_of_net_sales
-FROM segmented
-GROUP BY segment
-ORDER BY net_sales DESC;
+    COUNT(*)  AS customers_bought_2025,
+    SUM(cf.is_churned)AS churned_customers,
+    ROUND(SUM(cf.is_churned) * 100.0 / COUNT(*), 1)  AS churn_pct,
+    ROUND(SUM(CASE WHEN cf.is_churned = 1 THEN ns.net_sales_2025 ELSE 0 END) * 100.0/ SUM(ns.net_sales_2025), 1) AS pct_of_2025_net_sales_from_churned
+FROM churn_flag cf
+JOIN net_sales_2025 ns ON cf.customer_id = ns.customer_id;
