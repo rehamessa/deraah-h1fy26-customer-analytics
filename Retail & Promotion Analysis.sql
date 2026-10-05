@@ -44,10 +44,38 @@ SELECT 'Promo window (18 Feb-19 Mar)' AS period,
 FROM promo_window
 GROUP BY category_group
 UNION ALL
-SELECT 'Pre-period (28 days before)' AS period, category_group,
+SELECT 'Pre-period (28 days before)' AS period, 
+       category_group,
        COUNT(DISTINCT [date])AS days,
        SUM(net_amount)AS total_net_sales,
        ROUND(SUM(net_amount) / COUNT(DISTINCT [date]), 2) AS avg_daily_net_sales
 FROM pre_window
 GROUP BY category_group
-ORDER BY category_group, period;
+
+
+-- Total discount cost of P07
+
+SELECT SUM(f.discount_amount) AS p07_total_discount_cost
+FROM marts.fct_sales_lines f
+JOIN marts.dim_promotion pr ON 
+f.promo_key = pr.promo_key
+WHERE pr.promo_id = 'P07';
+
+/* D2 ------------------------------------------------------------
+-- Return rate by category, H1 2026 = value of returns / gross sales*/
+
+SELECT
+    p.category,
+    SUM(CASE WHEN f.is_return = 1 THEN ABS(f.net_amount) ELSE 0 END)AS return_value,
+    SUM(CASE WHEN f.is_return = 0 THEN f.net_amount ELSE 0 END)AS gross_sales,
+    ROUND(SUM(CASE WHEN f.is_return = 1 THEN ABS(f.net_amount) ELSE 0 END) * 100.0
+        / NULLIF(SUM(CASE WHEN f.is_return = 0 THEN f.net_amount ELSE 0 END), 0), 2) AS return_rate_pct
+FROM marts.fct_sales_lines f
+JOIN marts.dim_date dd    
+ON f.date_key = dd.date_key
+JOIN marts.dim_product p  
+ON f.product_key = p.product_key
+WHERE dd.[date] BETWEEN '2026-01-01' AND '2026-06-30'
+GROUP BY p.category
+ORDER BY return_rate_pct DESC;
+
