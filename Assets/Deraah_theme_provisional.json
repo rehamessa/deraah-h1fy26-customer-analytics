@@ -1,0 +1,28 @@
+{
+  "name": "Deraah (provisional)",
+  "dataColors": [
+    "#7A1F2B",
+    "#C9A24B",
+    "#3D3D3D",
+    "#9E8B6C",
+    "#4A6670",
+    "#B5533C",
+    "#6E7F6A",
+    "#D9CBB0"
+  ],
+  "background": "#FFFFFF",
+  "foreground": "#2B2B2B",
+  "tableAccent": "#7A1F2B",
+  "good": "#4A7A4A",
+  "neutral": "#C9A24B",
+  "bad": "#B5333C",
+  "maximum": "#7A1F2B",
+  "center": "#C9A24B",
+  "minimum": "#F2EADF",
+  "textClasses": {
+    "callout": { "fontSize": 32, "fontFace": "Segoe UI Semibold" },
+    "title": { "fontSize": 14, "fontFace": "Segoe UI Semibold", "color": "#2B2B2B" },
+    "header": { "fontSize": 12, "fontFace": "Segoe UI Semibold" },
+    "label": { "fontSize": 10, "fontFace": "Segoe UI" }
+  }
+}
