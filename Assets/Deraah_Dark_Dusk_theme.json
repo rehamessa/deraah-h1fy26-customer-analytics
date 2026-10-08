@@ -1,0 +1,52 @@
+{
+  "name": "Deraah Dusk (dark)",
+  "dataColors": [
+    "#EB958C",
+    "#F7C874",
+    "#6F86D6",
+    "#9DBA84",
+    "#F5C18F",
+    "#E57771",
+    "#5FA8A8",
+    "#B3A4D6"
+  ],
+  "background": "#1E2547",
+  "foreground": "#FFF4E6",
+  "foregroundNeutralSecondary": "#B9B5C9",
+  "foregroundNeutralTertiary": "#8C89A3",
+  "backgroundLight": "#262E57",
+  "backgroundNeutral": "#2F3866",
+  "tableAccent": "#EB958C",
+  "good": "#9DBA84",
+  "neutral": "#F7C874",
+  "bad": "#E57771",
+  "maximum": "#EB958C",
+  "center": "#F7C874",
+  "minimum": "#6F86D6",
+  "textClasses": {
+    "callout":  { "fontSize": 30, "fontFace": "Segoe UI Semibold", "color": "#FFF4E6" },
+    "title":    { "fontSize": 12, "fontFace": "Segoe UI Semibold", "color": "#FFF4E6" },
+    "header":   { "fontSize": 11, "fontFace": "Segoe UI Semibold", "color": "#F7C874" },
+    "label":    { "fontSize": 10, "fontFace": "Segoe UI", "color": "#B9B5C9" }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [{ "show": true, "color": { "solid": { "color": "#1E2547" } }, "transparency": 0 }],
+        "border":     [{ "show": true, "color": { "solid": { "color": "#2F3866" } }, "radius": 12 }],
+        "title":      [{ "show": true, "fontColor": { "solid": { "color": "#FFF4E6" } }, "fontSize": 12, "fontFamily": "Segoe UI Semibold", "alignment": "left" }],
+        "dropShadow": [{ "show": false }],
+        "labels":     [{ "color": { "solid": { "color": "#FFF4E6" } }, "fontSize": 9 }],
+        "categoryAxis": [{ "labelColor": { "solid": { "color": "#B9B5C9" } }, "fontSize": 9, "gridlineShow": false }],
+        "valueAxis":    [{ "labelColor": { "solid": { "color": "#B9B5C9" } }, "fontSize": 9, "gridlineColor": { "solid": { "color": "#2F3866" } } }],
+        "legend":       [{ "labelColor": { "solid": { "color": "#B9B5C9" } }, "fontSize": 9 }]
+      }
+    },
+    "page": {
+      "*": {
+        "background": [{ "color": { "solid": { "color": "#141A33" } }, "transparency": 0 }],
+        "outspace":   [{ "color": { "solid": { "color": "#0E1226" } } }]
+      }
+    }
+  }
+}
