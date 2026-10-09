@@ -128,11 +128,6 @@ Some things I ran into:
 
 Row-level security is set up with a **Region Manager** role, filtered on `Dim_branches[region] = "Central"`. A user in that role sees only their own region.
 
-## Known issues
-
-- Power BI shows 28,340 transactions and 5,240 active customers. My independent check gives 28,325 and 5,238. I think some customer IDs are not mapped to the main ID after deduplication.
-- SQL net sales and my Python audit differ by about 11K SAR. I haven't found the cause yet.
-- One walk-in customer appears as "1 active" in the loyalty tier card, because that ID has no row in `Dim_customers`.
 
 ## How to run
 
