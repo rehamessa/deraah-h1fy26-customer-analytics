@@ -1,0 +1,176 @@
+/* ============================================================
+   DERAAH - ALL DAX MEASURES IN ONE PLACE
+   Short, plain English. Each one says what it tells us and how it works.
+   "H1 2026 check" = the value you should see with the date slicer on
+   1 Jan 2026 - 30 Jun 2026 and no other filter.
+
+   Tables:  Fact_transaction_lines (one row per item sold)
+            Fact_transactions      (one row per receipt)
+            Dim_branches, Dim_customers, dim_products, Dim_promotions, DimDate
+   DimDate is marked as the date table and relates to Fact_transactions[TxnDate].
+   ============================================================ */
+
+
+/* ============================================================
+   1) THE 12 MEASURES THE BRIEF ASKS FOR  (table: _Measures)
+   ============================================================ */
+
+/* ---------- Folder: Sales ---------- */
+
+-- Money we kept from sales after returns and discounts. Returns are negative lines, so they come off automatically.
+-- Format: #,0 "SAR"   |   H1 2026 check: 14,415,489
+Net Sales =
+SUM(Fact_transaction_lines[net_amount])
+
+-- The same sales, one year earlier. Needs DimDate marked as a date table.
+-- Format: #,0 "SAR"   |   H1 2026 check: 12,922,971
+Net Sales LY =
+CALCULATE([Net Sales], SAMEPERIODLASTYEAR(DimDate[Date]))
+
+-- How much sales grew compared with the same period last year.
+-- Format: 0.0%   |   H1 2026 check: +11.5%
+YoY % =
+DIVIDE([Net Sales] - [Net Sales LY], [Net Sales LY])
+
+-- What a typical receipt is worth. Sales receipts only, so returns do not drag it down.
+-- Format: #,0 "SAR"   |   H1 2026 check: 518
+Average Basket =
+DIVIDE(
+    CALCULATE([Net Sales], Fact_transactions[txn_type] = "Sale"),
+    [Transactions]
+)
+
+-- Units per transaction: how many items go into a typical basket.
+-- Format: 0.00   |   H1 2026 check: 1.64
+UPT =
+DIVIDE(
+    CALCULATE(SUM(Fact_transaction_lines[qty]), Fact_transactions[txn_type] = "Sale"),
+    [Transactions]
+)
+
+-- Share of sales left after paying for the goods. Cost = quantity x unit cost, so returns reduce cost too.
+-- Format: 0.0%   |   H1 2026 check: 62.7%
+Gross Margin % =
+DIVIDE(
+    [Net Sales] - SUMX(Fact_transaction_lines, Fact_transaction_lines[qty] * RELATED(dim_products[unit_cost])),
+    [Net Sales]
+)
+
+
+/* ---------- Folder: Customers ---------- */
+
+-- How many different identified customers bought. Walk-ins have no ID, so they are left out on purpose
+-- (without the NOT ISBLANK line, "no customer" would be counted as one extra person).
+-- Format: #,0   |   H1 2026 check: 5,238
+Active Customers =
+CALCULATE(
+    DISTINCTCOUNT(Fact_transactions[customer_id]),
+    Fact_transactions[txn_type] = "Sale",
+    NOT ISBLANK(Fact_transactions[customer_id])
+)
+
+-- Of the customers who bought in the period, how many bought at least twice.
+-- Format: 0.0%   |   H1 2026 check: 75.9%   (it changes with the period: about 88% over the full 18 months)
+Repeat Rate % =
+VAR PerCustomer =
+    ADDCOLUMNS(
+        FILTER(VALUES(Fact_transactions[customer_id]), NOT ISBLANK(Fact_transactions[customer_id])),
+        "x_orders", CALCULATE(DISTINCTCOUNT(Fact_transactions[txn_id]), Fact_transactions[txn_type] = "Sale")
+    )
+VAR Buyers    = FILTER(PerCustomer, [x_orders] >= 1)
+VAR Repeaters = FILTER(PerCustomer, [x_orders] >= 2)
+RETURN
+    DIVIDE(COUNTROWS(Repeaters), COUNTROWS(Buyers))
+
+
+/* ---------- Folder: Stores ---------- */
+
+-- Sales from "comparable" stores only: open on 1 Jan 2025 and still open on 30 Jun 2026.
+-- New or closed stores would distort growth, so they are left out. (LFL Flag is a column on Dim_branches.)
+-- Format: #,0 "SAR"   |   H1 2026 check: 13,103,991
+LFL Net Sales =
+CALCULATE([Net Sales], Dim_branches[LFL Flag] = "LFL")
+
+-- Growth in those comparable stores against the same period last year.
+-- Format: 0.0%   |   H1 2026 check: +5.9%
+LFL Growth % =
+VAR LastYear = CALCULATE([LFL Net Sales], SAMEPERIODLASTYEAR(DimDate[Date]))
+RETURN
+    DIVIDE([LFL Net Sales] - LastYear, LastYear)
+
+
+/* ---------- Folder: Operations ---------- */
+
+-- Number of sales receipts (returns are not counted as transactions).
+-- Format: #,0   |   H1 2026 check: 28,325
+Transactions =
+CALCULATE(DISTINCTCOUNT(Fact_transaction_lines[txn_id]), Fact_transactions[txn_type] = "Sale")
+
+-- Value of returned goods as a share of normal sales. Shown as a positive number.
+-- Format: 0.0%   |   H1 2026 check: 1.7%
+Return Rate % =
+DIVIDE(
+    -CALCULATE([Net Sales], Fact_transaction_lines[is_return] = 1),
+    CALCULATE([Net Sales], Fact_transaction_lines[is_return] = 0)
+)
+
+
+/* ============================================================
+  SMALL HELPER MEASURES  
+   ============================================================ */
+
+-- Number of branches in the current view.
+Branches Total = DISTINCTCOUNT(Dim_branches[branch_id])
+
+-- Number of comparable (LFL) branches.
+LFL Branches = CALCULATE(DISTINCTCOUNT(Dim_branches[branch_id]), Dim_branches[LFL Flag] = "LFL")
+
+-- How hard the store space works: sales divided by floor area.
+Sales per sqm = DIVIDE([Net Sales], SUM(Dim_branches[area_sqm]))
+
+-- Sales on lines that carried a promotion. Non-promo lines have an empty promo_id, so we test for "not empty".
+Promo Lines Net Sales = CALCULATE([Net Sales], Fact_transaction_lines[promo_id] <> "")
+
+-- Share of all sales that came from promoted lines.
+Promo Share of Sales = DIVIDE([Promo Lines Net Sales], [Net Sales])
+
+-- Money given away in discounts on promoted lines.
+Promo Discount Cost (All) = CALCULATE(SUM(Fact_transaction_lines[discount_amount]), Fact_transaction_lines[promo_id] <> "")
+
+
+/* ============================================================
+ CALCULATED COLUMNS  (Table tools -> New column)
+   ============================================================ */
+
+-- Fact_transactions: first day of the month of the receipt (used by the cohort chart).
+TxnMonth = DATE(YEAR(Fact_transactions[txn_datetime]), MONTH(Fact_transactions[txn_datetime]), 1)
+
+-- Dim_customers: the month of the customer's first purchase (their cohort).
+CohortMonth = CALCULATE(MIN(Fact_transactions[TxnMonth]), Fact_transactions[txn_type] = "Sale")
+
+-- Dim_branches: comparable store or not.
+LFL Flag =
+IF(
+    Dim_branches[open_date] <= DATE(2025, 1, 1)
+        && (ISBLANK(Dim_branches[close_date]) || Dim_branches[close_date] >= DATE(2026, 6, 30)),
+    "LFL",
+    "Non-LFL"
+)
+
+-- RFM table: days since the customer's last sale, counted back from the reporting date.
+Recency = DATEDIFF(RFM[LastSale], DATE(2026, 6, 30), DAY)
+
+-- RFM table: the customer group, from the R, F and M scores (1 to 5, 5 = best).
+-- Keep your existing R, F and M columns as they are; this only reads them.
+Segment =
+SWITCH(
+    TRUE(),
+    RFM[R] = 5 && RFM[F] >= 4 && RFM[M] >= 4, "Champions",
+    RFM[R] >= 4 && RFM[F] >= 3,                "Loyal",
+    RFM[R] <= 2 && RFM[F] >= 4,                "At Risk",
+    RFM[R] <= 2 && RFM[F] <= 2,                "Hibernating",
+    "Others"
+)
+
+
+
