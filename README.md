@@ -31,18 +31,20 @@ Comparable stores are branches that opened on or before 1 Jan 2025 and were stil
 
 ## Dashboard
 
+
 **Executive**: the big picture, with sales, growth, margin and basket.
+---
 
 ![Executive](Assets/Executive_view.png)
-
+---
 **Customers**: RFM segments, loyalty tiers and a cohort heatmap.
 
 ![Customers](Assets/Customers_view.png)
-
+---
 **Branch Performance**: regions, the top 10 stores, a watch list and a drill-down from region to city to branch.
-
+---
 ![Branch Performance](Assets/Branch_view.png)
-
+---
 **Promotions**: cost, uplift and the P07 spotlight.
 
 ![Promotions](Assets/Promotion_view.png)
